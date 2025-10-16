@@ -14,6 +14,8 @@ const GetRecipes = ({ ingredients, onDetect }) => {
     const [steps, setSteps] = useState("");
     const [stepsLoading, setStepsLoading] = useState(false);
     const [stepsModalOpen, setStepsModalOpen] = useState(false);
+    const [userRating, setUserRating] = useState(0); // store selected rating
+
 
     // Fetch recipes from Spoonacular
     const getRecipes = async () => {
@@ -129,6 +131,26 @@ const GetRecipes = ({ ingredients, onDetect }) => {
         }
     };
 
+    const submitRating = async (recipeId, rating) => {
+        try {
+            // Example: send rating to your backend API
+            const res = await fetch("/api/ratings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ recipeId, rating }),
+            });
+
+            if (!res.ok) throw new Error("Failed to submit rating");
+
+            alert(`Thanks! You rated this recipe ${rating} ⭐`);
+            setUserRating(0); // reset after submission
+        } catch (err) {
+            console.error(err);
+            // alert("Error submitting rating. Try again.");
+        }
+    };
+
+
     return (
         <div className="flex flex-col items-center mt-6">
             {/* Fetch Recipes Button */}
@@ -213,6 +235,31 @@ const GetRecipes = ({ ingredients, onDetect }) => {
                                 </ul>
                             </div>
                         </div>
+
+                        {/* Rating Section */}
+                        <div className="mt-4 flex flex-col items-center">
+                            <h3 className="text-white font-semibold mb-2">Rate this Recipe ⭐</h3>
+                            <div className="flex gap-2">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                        key={star}
+                                        onClick={() => setUserRating(star)}
+                                        className={`text-2xl transition-colors ${userRating >= star ? "text-yellow-400" : "text-white/50"
+                                            }`}
+                                    >
+                                        ★
+                                    </button>
+                                ))}
+                            </div>
+                            <button
+                                onClick={() => submitRating(selectedRecipe.id, userRating)}
+                                disabled={userRating === 0}
+                                className="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                            >
+                                Submit Rating
+                            </button>
+                        </div>
+
 
                         <button
                             onClick={() => generateRecipeSteps(selectedRecipe)}

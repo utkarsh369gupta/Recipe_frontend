@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 // Health check route
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "🚀 Server is up and running!" });
+  res.status(200).json({ message: "Server is up and running!" });
 });
 
 app.post("/api/webhooks/user", async (req, res) => {
@@ -43,7 +43,7 @@ app.post("/api/webhooks/user", async (req, res) => {
     console.log(`✅ Synced user: ${email_addresses[0]?.email_address}`);
     res.status(200).send("User synced successfully");
   } catch (err) {
-    console.error("❌ Error syncing user:", err);
+    console.error("Error syncing user:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
